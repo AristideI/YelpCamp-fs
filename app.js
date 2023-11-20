@@ -1,46 +1,57 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 const parser = require("body-parser");
+
+mongoose.connect("mongodb://127.0.0.1:27017/yelp_camp", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
+  console.log("Connected to MongoDB!");
+});
+
 app.use(parser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-const camps = [
-  {
-    name: "Kigali Camps",
-    image:
-      "https://images.unsplash.com/photo-1455763916899-e8b50eca9967?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Musanze Mountains",
-    image:
-      "https://images.unsplash.com/photo-1603738397297-a374b78e9626?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Rusizi Forests",
-    image:
-      "https://images.unsplash.com/photo-1455496231601-e6195da1f841?q=80&w=1844&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Kigali Camps",
-    image:
-      "https://images.unsplash.com/photo-1455763916899-e8b50eca9967?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
+// Schema setup
+
+const campSchema = new mongoose.Schema({
+  name: String,
+  image: String,
+});
+
+const Camp = mongoose.model("Camp", campSchema);
 
 app.get("/", function (req, res) {
   res.render("landing");
 });
 
 app.get("/camps", (req, res) => {
-  res.render("camps", { camps });
+  const camps = Camp.find()
+    .then((camps) => {
+      res.render("camps", { camps });
+    })
+    .catch((err) => {
+      console.log("ERROR", err);
+    });
 });
 
 app.post("/camps", (req, res) => {
   const name = req.body.name;
   const image = req.body.image;
   const newCamp = { name, image };
-  camps.push(newCamp);
-  res.redirect("/camps");
+  Camp.create(newCamp)
+    .then((camp) => {
+      res.redirect("/camps");
+    })
+    .catch((err) => {
+      console.log("ERROR", err);
+    });
 });
 
 app.get("/camps/new", (req, res) => {
