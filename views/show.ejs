@@ -18,32 +18,29 @@
       </section>
     </header>
     <section class="flex flex-col justify-center items-center gap-6 py-20">
-      <h1 class="text-center font-semibold text-6xl">create new Camp</h1>
-      <form class="flex flex-col w-1/3 gap-6" action="/camps" method="POST">
-        <input
-          class="border px-8 py-2 rounded-lg"
-          type="text"
-          name="name"
-          placeholder="name"
-        />
-        <input
-          class="border px-8 py-2 rounded-lg"
-          type="text"
-          name="image"
-          placeholder="image url"
-        />
-        <input
-          class="border px-8 py-2 rounded-lg"
-          type="text"
-          name="description"
-          placeholder="description"
-        />
-        <button
-          class="px-8 py-2 rounded-lg bg-blue-600 text-white font-semibold"
+      <h1 class="text-center font-semibold text-6xl"><%= camp.name %></h1>
+      <img
+        src="<%= camp.image %>"
+        alt="camp image"
+        class="w-1/3 object-cover"
+      />
+      <p><%= camp.description %></p>
+
+      <p class="font-bold text-xl">Comments</p>
+      <section class="flex flex-col gap-2">
+        <% camp.comments.forEach(comment => { %>
+        <div class="flex flex-col gap-2 border border-blue-300 p-4">
+          <p class="font-semibold"><%= comment.author %></p>
+          <p><%= comment.text %></p>
+        </div>
+        <% }) %>
+        <a
+          href="/camps/<%= camp._id %>/comments/new"
+          class="bg-blue-300 px-4 py-1 rounded-md w-fit self-end"
+          >Add a comment</a
         >
-          Submit
-        </button>
-      </form>
+      </section>
+
       <a href="/camps" class="hover:underline bg-blue-300 rounded-md px-4 py-1"
         >Go Back</a
       >

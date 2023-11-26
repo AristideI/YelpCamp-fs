@@ -35,13 +35,20 @@
       >
         <% camps.forEach(elt=>{ %>
 
-        <div class="w-full border p-2">
+        <div
+          class="w-full border p-2 flex flex-col justify-between items-center gap-4"
+        >
           <img
             class="w-full object-cover h-48"
             src="<%= elt.image %>"
             alt="camp"
           />
           <h2 class="text-xl font-medium text-center"><%= elt.name %></h2>
+          <a
+            href="/camps/<%= elt._id %>"
+            class="font-medium mx-auto border border-blue-600 bg-blue-500 px-4 py-1 rounded-xl text-white"
+            >View More</a
+          >
         </div>
 
         <% }) %>
